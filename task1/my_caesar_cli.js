@@ -1,6 +1,10 @@
+const fs = require('fs');
+const { pipeline } = require('stream');
 const { Command } = require('commander');
 
-const actions = ['encode', 'decode'];
+const CaesarCipherTransform = require('./caesar_cipher_transform');
+const { actions } = require('./constants');
+
 const program = new Command();
 
 program.storeOptionsAsProperties(false).passCommandToAction(false);
@@ -13,18 +17,38 @@ program
 
 program.parse(process.argv);
 
-const params = program.opts();
+const { action, shift, input, output } = program.opts();
 
-if (!actions.some(action => action === params.action)) {
+if (!actions.some(item => item === action)) {
   process.exitCode = 1;
-  console.error(`error: please specify action: ${actions}`);
+  console.log(`error: please specify action: ${actions}`);
 }
 
-if (typeof params.shift === 'boolean' || isNaN(+params.shift)) {
+if (typeof shift === 'boolean' || isNaN(+shift)) {
   process.exitCode = 1;
-  console.error('error: please specify shift as number');
+  console.log('error: please specify shift as number');
 }
 
 if (!process.exitCode) {
-  console.log(params);
+  let readableStream;
+  let writeableStream;
+  const caesarCipherTransform = new CaesarCipherTransform({ action, shift });
+
+  if (typeof input === 'string') {
+    readableStream = fs.createReadStream(input);
+  } else {
+    readableStream = process.stdin;
+  }
+
+  if (typeof output === 'string') {
+    writeableStream = fs.createWriteStream(output);
+  } else {
+    writeableStream = process.stdout;
+  }
+
+  pipeline(readableStream, caesarCipherTransform, writeableStream, error => {
+    if (error) {
+      console.log('error: somethig wrong with reading or writing');
+    }
+  });
 }
