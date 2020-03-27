@@ -1,4 +1,5 @@
 const { Transform } = require('stream');
+const os = require('os');
 
 const { actions } = require('./constants');
 
@@ -17,7 +18,11 @@ class CaesarCipherTransform extends Transform {
     } else {
       this.push(chunk);
     }
+    callback();
+  }
 
+  _flush(callback) {
+    this.push(os.EOL);
     callback();
   }
 }

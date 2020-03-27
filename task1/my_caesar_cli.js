@@ -41,7 +41,7 @@ if (!process.exitCode) {
   }
 
   if (typeof output === 'string') {
-    writeableStream = fs.createWriteStream(output);
+    writeableStream = fs.createWriteStream(output, { flags: 'a' });
   } else {
     writeableStream = process.stdout;
   }
