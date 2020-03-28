@@ -2,7 +2,7 @@ const fs = require('fs');
 const { pipeline } = require('stream');
 const { Command } = require('commander');
 
-const CaesarCipherTransform = require('./caesar_cipher_transform');
+const { CaesarCipherTransform } = require('./caesar_cipher_transform');
 const { actions } = require('./constants');
 
 const program = new Command();

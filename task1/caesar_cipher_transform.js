@@ -2,19 +2,25 @@ const { Transform } = require('stream');
 const os = require('os');
 
 const { actions } = require('./constants');
+const { CaesarCipher } = require('./caesar_cipher');
 
 class CaesarCipherTransform extends Transform {
   constructor({ action, shift }) {
     super({});
     this.action = action;
     this.shift = +shift;
+    this.caesarCipher = new CaesarCipher(shift);
   }
 
   _transform(chunk, encoding, callback) {
+    if (Buffer.isBuffer(chunk)) {
+      chunk = chunk.toString('utf8');
+    }
+
     if (this.action === actions[0]) {
-      this.push(caesarCipher(chunk, this.shift));
+      this.push(this.caesarCipher.encode(chunk));
     } else if (this.action === actions[1]) {
-      this.push(caesarCipher(chunk, -this.shift));
+      this.push(this.caesarCipher.decode(chunk));
     } else {
       this.push(chunk);
     }
@@ -27,35 +33,6 @@ class CaesarCipherTransform extends Transform {
   }
 }
 
-const caesarCipher = (text, shift) => {
-  const length = 26;
-  const startCode = {
-    uppercase: 'A'.charCodeAt(0),
-    lowercase: 'a'.charCodeAt(0)
-  };
-
-  if (Buffer.isBuffer(text)) {
-    text = text.toString('utf8');
-  }
-
-  return [...text]
-    .map(letter => {
-      const charCode = letter.charCodeAt(0);
-      const foundCase = ['uppercase', 'lowercase'].find(
-        someCase =>
-          charCode >= startCode[someCase] &&
-          charCode < startCode[someCase] + length
-      );
-      if (foundCase) {
-        return String.fromCharCode(
-          ((charCode - startCode[foundCase] - shift + length) % length) +
-            startCode[foundCase]
-        );
-      }
-
-      return letter;
-    })
-    .join('');
+module.exports = {
+  CaesarCipherTransform
 };
-
-module.exports = CaesarCipherTransform;
