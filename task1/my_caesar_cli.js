@@ -21,12 +21,12 @@ const { action, shift, input, output } = program.opts();
 
 if (!actions.some(item => item === action)) {
   process.exitCode = 1;
-  console.log(`error: please specify action: ${actions}`);
+  console.error(`error: please specify action: ${actions}`);
 }
 
 if (typeof shift === 'boolean' || isNaN(+shift)) {
   process.exitCode = 1;
-  console.log('error: please specify shift as number');
+  console.error('error: please specify shift as number');
 }
 
 if (!process.exitCode) {
@@ -48,7 +48,7 @@ if (!process.exitCode) {
 
   pipeline(readableStream, caesarCipherTransform, writeableStream, error => {
     if (error) {
-      console.log('error: somethig wrong with reading or writing');
+      console.error(error.message);
     }
   });
 }
