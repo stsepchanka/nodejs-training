@@ -4,10 +4,10 @@ CLI tool that encodes and decodes a text by Caesar cipher.
 
 CLI tool accepts 4 options (short alias and full name):
 
--s, --shift: a shift  (mandatory)
--i, --input: an input file
--o, --output: an output file
--a, --action: an action encode/decode  (mandatory)
+1.  **-s, --shift**: a shift (mandatory)
+2.  **-i, --input**: an input file
+3.  **-o, --output**: an output file
+4.  **-a, --action**: an action encode/decode (mandatory)
 
 If --input or/and --output are missing stdin and stdout are used.
 
