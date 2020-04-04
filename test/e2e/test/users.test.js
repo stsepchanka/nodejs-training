@@ -122,6 +122,14 @@ describe('Users suite', () => {
   });
 
   describe('DELETE', () => {
+    const TEST_BOARD_DATA = {
+      title: 'Autotest board',
+      columns: [
+        { title: 'Backlog', order: 1 },
+        { title: 'Sprint', order: 2 }
+      ]
+    };
+
     it('should delete user successfully', async () => {
       // Setup:
       const userResponse = await request
@@ -146,6 +154,7 @@ describe('Users suite', () => {
 
       const boardResponse = await request
         .post(routes.boards.create)
+        .send(TEST_BOARD_DATA)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/);
