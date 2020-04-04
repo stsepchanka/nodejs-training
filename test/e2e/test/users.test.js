@@ -56,6 +56,8 @@ describe('Users suite', () => {
 
   describe('POST', () => {
     it('should create user successfully', async () => {
+      let userId;
+
       await request
         .post(routes.users.create)
         .set('Accept', 'application/json')
@@ -63,6 +65,7 @@ describe('Users suite', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .then(res => {
+          userId = res.body.id;
           expect(res.body.id).to.be.a('string');
           expect(res.body).to.not.have.property('password');
           jestExpect(res.body).toMatchObject({
@@ -70,6 +73,9 @@ describe('Users suite', () => {
             name: TEST_USER_DATA.name
           });
         });
+
+      // Teardown
+      await request.delete(routes.users.delete(userId));
     });
   });
 
